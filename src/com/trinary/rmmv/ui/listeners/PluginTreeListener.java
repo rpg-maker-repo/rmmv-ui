@@ -1,4 +1,4 @@
-package com.trinary.rmmv.ui;
+package com.trinary.rmmv.ui.listeners;
 
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
@@ -10,10 +10,13 @@ import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
-public class PluginSelectionListener implements TreeSelectionListener, MouseListener {
+import com.trinary.rmmv.ui.components.menu.RemotePopupMenu;
+import com.trinary.rmmv.ui.components.tree.PluginNode;
+
+public class PluginTreeListener implements TreeSelectionListener, MouseListener {
 	protected JTree tree;
 	
-	public PluginSelectionListener(JTree tree) {
+	public PluginTreeListener(JTree tree) {
 		this.tree = tree;
 	}
 	
@@ -45,7 +48,7 @@ public class PluginSelectionListener implements TreeSelectionListener, MouseList
         		}
             	PluginNode node = (PluginNode) path.getLastPathComponent();
 
-                RemotePluginPopupMenu menu = new RemotePluginPopupMenu(node);
+                RemotePopupMenu menu = new RemotePopupMenu(node);
                 menu.show(tree, pathBounds.x, pathBounds.y + pathBounds.height);
             }
 		}

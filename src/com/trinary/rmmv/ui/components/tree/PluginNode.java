@@ -1,4 +1,4 @@
-package com.trinary.rmmv.ui;
+package com.trinary.rmmv.ui.components.tree;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
