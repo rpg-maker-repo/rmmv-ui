@@ -3,7 +3,7 @@ package com.trinary.rmmv.ui.components.menu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-import com.trinary.rmmv.ui.components.tree.PluginVersionNode;
+import com.trinary.rmmv.ui.components.tree.nodes.PluginVersionNode;
 
 public class RemotePopupMenu extends JPopupMenu {
 	private static final long serialVersionUID = 1L;

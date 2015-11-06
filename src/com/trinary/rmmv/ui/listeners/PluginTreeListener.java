@@ -11,7 +11,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import com.trinary.rmmv.ui.components.menu.RemotePopupMenu;
-import com.trinary.rmmv.ui.components.tree.PluginVersionNode;
+import com.trinary.rmmv.ui.components.tree.nodes.PluginVersionNode;
 
 public class PluginTreeListener implements TreeSelectionListener, MouseListener {
 	protected JTree tree;
@@ -26,8 +26,6 @@ public class PluginTreeListener implements TreeSelectionListener, MouseListener 
 			return;
 		}
 		PluginVersionNode node = (PluginVersionNode)tree.getLastSelectedPathComponent();
-		System.out.println("NODE SELECTED");
-		System.out.println(node.getPlugin().getName() + "(" + node.getPlugin().getVersion() + ")");
 		
 		// Show plugin details below split pane.
 	}

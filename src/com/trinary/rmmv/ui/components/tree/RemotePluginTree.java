@@ -8,13 +8,16 @@ import javax.swing.tree.DefaultTreeModel;
 
 import com.trinary.rmmv.client.PluginClient;
 import com.trinary.rmmv.client.PluginVersionClient;
+import com.trinary.rmmv.ui.components.tree.nodes.PluginBaseNode;
+import com.trinary.rmmv.ui.components.tree.nodes.PluginDependencyNode;
+import com.trinary.rmmv.ui.components.tree.nodes.PluginVersionNode;
 import com.trinary.rpgmaker.ro.PluginBaseRO;
 import com.trinary.rpgmaker.ro.PluginRO;
 
-public class RemoteTree extends JTree {
+public class RemotePluginTree extends JTree {
 	private static final long serialVersionUID = 1L;
 
-	public RemoteTree() {
+	public RemotePluginTree() {
 		DefaultMutableTreeNode root = null;
 		try {
 			root = createRemotePluginTree(null);
@@ -75,8 +78,8 @@ public class RemoteTree extends JTree {
 		PluginVersionClient client = new PluginVersionClient();
 		List<PluginRO> dependencies = null;
 		PluginVersionNode node = new PluginVersionNode(plugin);
-		dependencies = client.getDependencies(plugin);
 		
+		dependencies = client.getDependencies(plugin);
 		for (PluginRO dependency : dependencies) {
 			PluginDependencyNode child = (PluginDependencyNode)createRemoteDependencyTree(dependency);
 			node.add(child);
@@ -89,6 +92,7 @@ public class RemoteTree extends JTree {
 		PluginVersionClient client = new PluginVersionClient();
 		List<PluginRO> dependencies = null;
 		PluginDependencyNode node = new PluginDependencyNode(plugin);
+		
 		dependencies = client.getDependencies(plugin);
 		
 		for (PluginRO dependency : dependencies) {

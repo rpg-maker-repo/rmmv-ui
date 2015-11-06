@@ -8,8 +8,8 @@ import javax.swing.JTree;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.TreeSelectionModel;
 
-import com.trinary.rmmv.ui.components.tree.LocalTree;
-import com.trinary.rmmv.ui.components.tree.RemoteTree;
+import com.trinary.rmmv.ui.components.tree.LocalPluginTree;
+import com.trinary.rmmv.ui.components.tree.RemotePluginTree;
 import com.trinary.rmmv.ui.listeners.PluginTreeListener;
 
 public class PluginManagerPanel extends JPanel {
@@ -23,10 +23,10 @@ public class PluginManagerPanel extends JPanel {
 		JSplitPane splitPane = new JSplitPane();
 		this.add(splitPane, BorderLayout.CENTER);
 		
-		JTree local = new LocalTree();
+		JTree local = new LocalPluginTree();
 		splitPane.setLeftComponent(local);
 		
-		JTree remote = new RemoteTree();
+		JTree remote = new RemotePluginTree();
 		remote.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		remote.addMouseListener(new PluginTreeListener(remote));
 		remote.addTreeSelectionListener(new PluginTreeListener(remote));

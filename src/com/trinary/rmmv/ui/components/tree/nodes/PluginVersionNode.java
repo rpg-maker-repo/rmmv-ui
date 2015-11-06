@@ -1,37 +1,35 @@
-package com.trinary.rmmv.ui.components.tree;
+package com.trinary.rmmv.ui.components.tree.nodes;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.trinary.rpgmaker.ro.PluginBaseRO;
+import com.trinary.rpgmaker.ro.PluginRO;
 
-
-public class PluginBaseNode extends DefaultMutableTreeNode {
+public class PluginVersionNode extends DefaultMutableTreeNode {
 	private static final long serialVersionUID = 1L;
+	private PluginRO plugin;
+	private Boolean isDownloadable = true;
 
-	private PluginBaseRO plugin;
-	private Boolean isDownloadable = false;
-
-	public PluginBaseNode(PluginBaseRO plugin, boolean allowsChildren) {
-		super(plugin.getName(), allowsChildren);
+	public PluginVersionNode(PluginRO plugin,  boolean allowsChildren) {
+		super(plugin.getVersion(), allowsChildren);
 		this.plugin = plugin;
 	}
-	
-	public PluginBaseNode(PluginBaseRO plugin) {
-		super(plugin.getName());
+
+	public PluginVersionNode(PluginRO plugin) {
+		super(plugin.getVersion());
 		this.plugin = plugin;
 	}
 
 	/**
 	 * @return the plugin
 	 */
-	public PluginBaseRO getPlugin() {
+	public PluginRO getPlugin() {
 		return plugin;
 	}
 
 	/**
 	 * @param plugin the plugin to set
 	 */
-	public void setPlugin(PluginBaseRO plugin) {
+	public void setPlugin(PluginRO plugin) {
 		this.plugin = plugin;
 	}
 
