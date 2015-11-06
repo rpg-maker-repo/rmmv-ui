@@ -11,7 +11,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import com.trinary.rmmv.ui.components.menu.RemotePopupMenu;
-import com.trinary.rmmv.ui.components.tree.PluginNode;
+import com.trinary.rmmv.ui.components.tree.PluginVersionNode;
 
 public class PluginTreeListener implements TreeSelectionListener, MouseListener {
 	protected JTree tree;
@@ -22,10 +22,10 @@ public class PluginTreeListener implements TreeSelectionListener, MouseListener 
 	
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
-		if (!(tree.getLastSelectedPathComponent() instanceof PluginNode)) {
+		if (!(tree.getLastSelectedPathComponent() instanceof PluginVersionNode)) {
 			return;
 		}
-		PluginNode node = (PluginNode)tree.getLastSelectedPathComponent();
+		PluginVersionNode node = (PluginVersionNode)tree.getLastSelectedPathComponent();
 		System.out.println("NODE SELECTED");
 		System.out.println(node.getPlugin().getName() + "(" + node.getPlugin().getVersion() + ")");
 		
@@ -34,7 +34,7 @@ public class PluginTreeListener implements TreeSelectionListener, MouseListener 
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if (!(tree.getLastSelectedPathComponent() instanceof PluginNode)) {
+		if (!(tree.getLastSelectedPathComponent() instanceof PluginVersionNode)) {
 			return;
 		}
 		
@@ -43,10 +43,10 @@ public class PluginTreeListener implements TreeSelectionListener, MouseListener 
             Rectangle pathBounds = tree.getUI ().getPathBounds ( tree, path );
             if ( pathBounds != null && pathBounds.contains ( e.getX (), e.getY () ) )
             {
-        		if (!(path.getLastPathComponent() instanceof PluginNode)) {
+        		if (!(path.getLastPathComponent() instanceof PluginVersionNode)) {
         			return;
         		}
-            	PluginNode node = (PluginNode) path.getLastPathComponent();
+            	PluginVersionNode node = (PluginVersionNode) path.getLastPathComponent();
 
                 RemotePopupMenu menu = new RemotePopupMenu(node);
                 menu.show(tree, pathBounds.x, pathBounds.y + pathBounds.height);

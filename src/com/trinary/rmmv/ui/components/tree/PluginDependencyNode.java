@@ -4,18 +4,18 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.trinary.rpgmaker.ro.PluginRO;
 
-public class PluginNode extends DefaultMutableTreeNode {
+public class PluginDependencyNode extends DefaultMutableTreeNode {
 	private static final long serialVersionUID = 1L;
 	private PluginRO plugin;
 	private Boolean isDownloadable = false;
 
-	public PluginNode(PluginRO plugin,  boolean allowsChildren) {
-		super(plugin.getName(), allowsChildren);
+	public PluginDependencyNode(PluginRO plugin,  boolean allowsChildren) {
+		super(String.format("%s (%s)", plugin.getName(), plugin.getVersion()), allowsChildren);
 		this.plugin = plugin;
 	}
 
-	public PluginNode(PluginRO plugin) {
-		super(plugin.getName());
+	public PluginDependencyNode(PluginRO plugin) {
+		super(String.format("%s (%s)", plugin.getName(), plugin.getVersion()));
 		this.plugin = plugin;
 	}
 

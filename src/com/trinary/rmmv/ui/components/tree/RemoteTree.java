@@ -7,6 +7,8 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 
 import com.trinary.rmmv.client.PluginClient;
+import com.trinary.rmmv.client.PluginVersionClient;
+import com.trinary.rpgmaker.ro.PluginBaseRO;
 import com.trinary.rpgmaker.ro.PluginRO;
 
 public class RemoteTree extends JTree {
@@ -15,7 +17,7 @@ public class RemoteTree extends JTree {
 	public RemoteTree() {
 		DefaultMutableTreeNode root = null;
 		try {
-			root = createRemoteTree(null);
+			root = createRemotePluginTree(null);
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
@@ -25,24 +27,72 @@ public class RemoteTree extends JTree {
 		this.setModel(model);
 	}
 	
-	protected DefaultMutableTreeNode createRemoteTree(PluginRO plugin) throws Exception {
+	protected DefaultMutableTreeNode createRemotePluginTree(PluginBaseRO plugin) throws Exception {
 		PluginClient client = new PluginClient();
-		List<PluginRO> dependencies = null;
+		List<PluginBaseRO> plugins = null;
+		List<PluginRO> versions = null;
 		DefaultMutableTreeNode node = null;
 		if (plugin == null) {
 			node = new DefaultMutableTreeNode("Remote Plugins");
-			dependencies = client.getAllPlugins();
+			plugins = client.getAll();
 		} else {
-			node = new PluginNode(plugin);
-			dependencies = client.getDependencies(plugin);
+			node = new PluginBaseNode(plugin);
+			versions = client.getVersions(plugin.getId());
 		}
 		
-		for (PluginRO dependency : dependencies) {
-			PluginNode child = (PluginNode)createRemoteTree(dependency);
-			// If not a dependency
-			if (plugin == null) {
-				child.setIsDownloadable(true);
+		if (plugins != null) {
+			for (PluginBaseRO pluginRO : plugins) {
+				PluginBaseNode child;
+				try {
+					child = (PluginBaseNode)createRemotePluginTree(pluginRO);
+				} catch (Exception e) {
+					continue;
+				}
+				node.add(child);
 			}
+		} else if (versions != null) {
+			for (PluginRO version : versions) {
+				PluginVersionNode child;
+				try {
+					child = (PluginVersionNode)createRemoteVersionTree(version);
+				} catch (Exception e) {
+					e.printStackTrace();
+					continue;
+				}
+				
+				// If not a dependency
+				if (plugin == null) {
+					child.setIsDownloadable(true);
+				}
+				node.add(child);
+			}
+		}
+		
+		return node;
+	}
+	
+	protected PluginVersionNode createRemoteVersionTree(PluginRO plugin) throws Exception {
+		PluginVersionClient client = new PluginVersionClient();
+		List<PluginRO> dependencies = null;
+		PluginVersionNode node = new PluginVersionNode(plugin);
+		dependencies = client.getDependencies(plugin);
+		
+		for (PluginRO dependency : dependencies) {
+			PluginDependencyNode child = (PluginDependencyNode)createRemoteDependencyTree(dependency);
+			node.add(child);
+		}
+		
+		return node;
+	}
+	
+	protected PluginDependencyNode createRemoteDependencyTree(PluginRO plugin) throws Exception {
+		PluginVersionClient client = new PluginVersionClient();
+		List<PluginRO> dependencies = null;
+		PluginDependencyNode node = new PluginDependencyNode(plugin);
+		dependencies = client.getDependencies(plugin);
+		
+		for (PluginRO dependency : dependencies) {
+			PluginDependencyNode child = (PluginDependencyNode)createRemoteDependencyTree(dependency);
 			node.add(child);
 		}
 		
