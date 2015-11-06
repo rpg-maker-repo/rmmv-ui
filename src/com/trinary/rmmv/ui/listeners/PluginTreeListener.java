@@ -4,6 +4,8 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import javax.swing.JComponent;
+import javax.swing.JTextPane;
 import javax.swing.JTree;
 import javax.swing.SwingUtilities;
 import javax.swing.event.TreeSelectionEvent;
@@ -11,23 +13,38 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 
 import com.trinary.rmmv.ui.components.menu.RemotePopupMenu;
+import com.trinary.rmmv.ui.components.tree.nodes.PluginNode;
 import com.trinary.rmmv.ui.components.tree.nodes.PluginVersionNode;
+import com.trinary.rpgmaker.ro.PluginRO;
 
 public class PluginTreeListener implements TreeSelectionListener, MouseListener {
 	protected JTree tree;
+	protected JComponent statusPanel;
 	
-	public PluginTreeListener(JTree tree) {
+	public PluginTreeListener(JTree tree, JComponent component) {
 		this.tree = tree;
+		this.statusPanel = component;
 	}
 	
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
-		if (!(tree.getLastSelectedPathComponent() instanceof PluginVersionNode)) {
+		if (tree.getLastSelectedPathComponent() instanceof PluginNode) {
+			PluginNode node = (PluginNode)tree.getLastSelectedPathComponent();
+			PluginRO plugin = node.getPlugin();
+			
+			String pluginDescription = String.format(""
+					+ "Name:        %s (%s)\n"
+					+ "Description: %s\n"
+					+ "RM Version:  %s", 
+					plugin.getName(), plugin.getVersion(),
+					plugin.getDescription(),
+					plugin.getCompatibleRMVersion());
+			
+			// Show plugin details below split pane.
+			JTextPane text = (JTextPane)statusPanel;
+			text.setText(pluginDescription);
 			return;
 		}
-		PluginVersionNode node = (PluginVersionNode)tree.getLastSelectedPathComponent();
-		
-		// Show plugin details below split pane.
 	}
 
 	@Override

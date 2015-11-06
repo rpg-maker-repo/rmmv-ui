@@ -4,7 +4,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import com.trinary.rpgmaker.ro.PluginRO;
 
-public class PluginVersionNode extends DefaultMutableTreeNode {
+public class PluginVersionNode extends DefaultMutableTreeNode implements PluginNode {
 	private static final long serialVersionUID = 1L;
 	private PluginRO plugin;
 	private Boolean isDownloadable = true;
