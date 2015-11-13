@@ -24,10 +24,11 @@ public class PluginManagerPanel extends JPanel {
 		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setLayout(new BorderLayout(0, 0));
 		JPanel statusPanel = new JPanel();
+		statusPanel.setLayout(new BorderLayout());
 		statusTable = new JTextPane();
 		statusTable.setEditable(false);
 		statusTable.setEnabled(false);
-		statusPanel.add(statusTable);
+		statusPanel.add(statusTable, BorderLayout.CENTER);
 		this.add(statusPanel, BorderLayout.SOUTH);
 		
 		JSplitPane splitPane = new JSplitPane();

@@ -80,9 +80,14 @@ public class RemotePluginTree extends JTree {
 		PluginVersionNode node = new PluginVersionNode(plugin);
 		
 		dependencies = client.getDependencies(plugin);
+		DefaultMutableTreeNode dependenciesNode = new DefaultMutableTreeNode("Dependencies");
 		for (PluginRO dependency : dependencies) {
 			PluginDependencyNode child = (PluginDependencyNode)createRemoteDependencyTree(dependency);
-			node.add(child);
+			dependenciesNode.add(child);
+		}
+		
+		if (!dependencies.isEmpty()) {
+			node.add(dependenciesNode);
 		}
 		
 		return node;
