@@ -8,9 +8,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -20,10 +19,15 @@ import javax.swing.tree.DefaultTreeModel;
 import org.apache.commons.codec.binary.Base64;
 
 import com.trinary.rmmv.client.PluginVersionClient;
+import com.trinary.rmmv.ui.ProjectManagerConfig;
 import com.trinary.rmmv.ui.components.tree.nodes.AmbiguousPluginVersionLocalNode;
+import com.trinary.rmmv.ui.components.tree.nodes.OutOfDatePluginLocalNode;
 import com.trinary.rmmv.ui.components.tree.nodes.PluginVersionLocalNode;
+import com.trinary.rmmv.ui.components.tree.nodes.ProjectNode;
 import com.trinary.rmmv.ui.components.tree.nodes.UnknownPluginVersionLocalNode;
 import com.trinary.rmmv.ui.ro.AmbiguousPluginRO;
+import com.trinary.rmmv.ui.ro.OutOfDatePluginRO;
+import com.trinary.rmmv.ui.ro.Project;
 import com.trinary.rmmv.ui.ro.UnknownPluginRO;
 import com.trinary.rpgmaker.ro.PluginRO;
 
@@ -50,6 +54,10 @@ public class LocalPluginTree extends JTree {
 		            setForeground(Color.RED);
 		        } else if (node instanceof AmbiguousPluginVersionLocalNode) {
 		            setForeground(Color.BLUE);
+		        } else if (node instanceof OutOfDatePluginLocalNode) {
+		        	setForeground(Color.GRAY);
+		        } else if (node instanceof PluginVersionLocalNode) {
+		        	setForeground(Color.GREEN);
 		        }
 
 		        return this;
@@ -57,29 +65,65 @@ public class LocalPluginTree extends JTree {
 			
 		});
 		
-		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Local Plugins");
-		Map<String, PluginRO> map = analyzeProject("/Users/mmain/Documents/Games/Test Game");
+		refreshTree();
+	}
+	
+	public void refreshTree() {
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Local Projects");
+		List<Project> projects = analyzeProjects(ProjectManagerConfig.projectsRoot);
 		
-		for (PluginRO plugin : map.values()) {
-			 if (plugin instanceof UnknownPluginRO) {
-				root.add(new UnknownPluginVersionLocalNode((UnknownPluginRO)plugin));
-			} else if (plugin instanceof AmbiguousPluginRO) {
-				AmbiguousPluginVersionLocalNode node = new AmbiguousPluginVersionLocalNode((AmbiguousPluginRO)plugin);
-				AmbiguousPluginRO ambiguousPlugin = (AmbiguousPluginRO)plugin;
-				for (PluginRO match : ambiguousPlugin.getPlugins()) {
-					node.add(new PluginVersionLocalNode(match));
+		for (Project project : projects) {
+			ProjectNode projectRoot = new ProjectNode(project);
+			DefaultMutableTreeNode pluginsNode = new DefaultMutableTreeNode("plugins");
+			for (PluginRO plugin : project.getPlugins()) {
+				if (plugin instanceof OutOfDatePluginRO) {
+					pluginsNode.add(new OutOfDatePluginLocalNode(plugin, project));
+				} else if (plugin instanceof UnknownPluginRO) {
+					 pluginsNode.add(new UnknownPluginVersionLocalNode((UnknownPluginRO)plugin, project));
+				} else if (plugin instanceof AmbiguousPluginRO) {
+					AmbiguousPluginVersionLocalNode node = new AmbiguousPluginVersionLocalNode((AmbiguousPluginRO)plugin, project);
+					AmbiguousPluginRO ambiguousPlugin = (AmbiguousPluginRO)plugin;
+					for (PluginRO match : ambiguousPlugin.getPlugins()) {
+						node.add(new PluginVersionLocalNode(match, project));
+					}
+					pluginsNode.add(node);
+				} else if (plugin instanceof PluginRO) {
+					pluginsNode.add(new PluginVersionLocalNode(plugin, project));
 				}
-				root.add(node);
-			} else if (plugin instanceof PluginRO) {
-				root.add(new PluginVersionLocalNode(plugin));
 			}
+			projectRoot.add(pluginsNode);
+			root.add(projectRoot);
 		}
 		
 		DefaultTreeModel model = new DefaultTreeModel(root);
 		this.setModel(model);
 	}
 	
-	public Map<String, PluginRO> analyzeProject(String projectDirectory) {
+	protected List<Project> analyzeProjects(String rootDirectory) {
+		File dir = new File(rootDirectory);
+		
+		if (!dir.isDirectory()) {
+			return null;
+		}
+		
+		File[] files = dir.listFiles();
+		List<Project> projects = new ArrayList<Project>();
+		
+		for (File file : files) {
+			if (file.isDirectory()) {
+				Project project = analyzeProject(file.getAbsolutePath());
+				
+				if (project != null) {
+					projects.add(project);
+				}
+			}
+		}
+		
+		return projects;
+	}
+	
+	protected Project analyzeProject(String projectDirectory) {
+		File rootDir = new File(projectDirectory);
 		File dir = new File(projectDirectory + "/js/plugins");
 		
 		if (!dir.isDirectory()) {
@@ -87,7 +131,7 @@ public class LocalPluginTree extends JTree {
 		}
 		
 		File[] files = dir.listFiles();
-		Map<String, PluginRO> plugins = new HashMap<String, PluginRO>();
+		List<PluginRO> plugins = new ArrayList<PluginRO>();
 		
 		for (File file : files) {
 			if (file.isFile() && file.getName().endsWith(".js")) {
@@ -95,15 +139,20 @@ public class LocalPluginTree extends JTree {
 				plugin = identifyFile(file);
 				
 				if (plugin != null) {
-					plugins.put(file.getAbsolutePath(), plugin);
+					plugins.add(plugin);
 				}
 			}
 		}
 		
-		return plugins;
+		Project project = new Project();
+		project.setName(rootDir.getName());
+		project.setPath(rootDir.getAbsolutePath());
+		project.setPlugins(plugins);
+		
+		return project;
 	}
 	
-	public PluginRO identifyFile(File file) {
+	protected PluginRO identifyFile(File file) {
 		PluginVersionClient client = new PluginVersionClient();
 		
 		String hash = getFileHash(file);
@@ -127,10 +176,26 @@ public class LocalPluginTree extends JTree {
 			return ambiguousPlugin;
 		}
 		
+		try {
+			List<PluginRO> latestVersion = client.getLatestVersion(plugins.get(0));
+			if (latestVersion.get(0).getId() != plugins.get(0).getId()) {
+				OutOfDatePluginRO outOfDatePlugin = new OutOfDatePluginRO(plugins.get(0));
+				outOfDatePlugin.setLatestVersion(latestVersion.get(0));
+				outOfDatePlugin.setFilename(file.getName());
+				return outOfDatePlugin;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		// Set current plugin to local name
+		plugins.get(0).setFilename(file.getName());
+		
 		return plugins.get(0);
 	}
 	
-	public String getFileHash(File file) {
+	protected String getFileHash(File file) {
         MessageDigest md;
 		try {
 			md = MessageDigest.getInstance("MD5");

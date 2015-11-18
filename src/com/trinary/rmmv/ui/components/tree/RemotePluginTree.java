@@ -18,42 +18,66 @@ public class RemotePluginTree extends JTree {
 	private static final long serialVersionUID = 1L;
 
 	public RemotePluginTree() {
-		DefaultMutableTreeNode root = null;
+		refreshTree();
+	}
+	
+	public void refreshTree() {
+		DefaultMutableTreeNode pluginRootNode = null;
+		DefaultMutableTreeNode tilesetRootNode = null;
 		try {
-			root = createRemotePluginTree(null);
+			pluginRootNode = createRemotePluginTree();
+			tilesetRootNode = createRemoteTilesetTree();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return;
 		}
 		
+		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Remote Assets");
+		root.add(pluginRootNode);
+		root.add(tilesetRootNode);
+		
 		DefaultTreeModel model = new DefaultTreeModel(root);
 		this.setModel(model);
 	}
 	
-	protected DefaultMutableTreeNode createRemotePluginTree(PluginBaseRO plugin) throws Exception {
+	protected DefaultMutableTreeNode createRemoteTilesetTree() throws Exception {
+		DefaultMutableTreeNode node = new DefaultMutableTreeNode("tilesets");
+		
+		return node;
+	}
+	
+	protected DefaultMutableTreeNode createRemotePluginTree() throws Exception {
 		PluginClient client = new PluginClient();
 		List<PluginBaseRO> plugins = null;
-		List<PluginRO> versions = null;
 		DefaultMutableTreeNode node = null;
-		if (plugin == null) {
-			node = new DefaultMutableTreeNode("Remote Plugins");
-			plugins = client.getAll();
-		} else {
-			node = new PluginBaseNode(plugin);
-			versions = client.getVersions(plugin.getId());
-		}
+
+		node = new DefaultMutableTreeNode("plugins");
+		plugins = client.getAll();
 		
 		if (plugins != null) {
 			for (PluginBaseRO pluginRO : plugins) {
 				PluginBaseNode child;
 				try {
-					child = (PluginBaseNode)createRemotePluginTree(pluginRO);
+					child = (PluginBaseNode)createRemotePluginBaseTree(pluginRO);
 				} catch (Exception e) {
 					continue;
 				}
 				node.add(child);
 			}
-		} else if (versions != null) {
+		}
+		
+		return node;
+	}
+	
+	protected PluginBaseNode createRemotePluginBaseTree(PluginBaseRO plugin) throws Exception {
+		PluginClient client = new PluginClient();
+		List<PluginRO> versions = null;
+		PluginBaseNode node = new PluginBaseNode(plugin);
+		versions = client.getVersions(plugin.getId());
+		
+		DefaultMutableTreeNode versionsRootNode = new DefaultMutableTreeNode("versions");
+		
+		if (versions != null) {
 			for (PluginRO version : versions) {
 				PluginVersionNode child;
 				try {
@@ -67,9 +91,10 @@ public class RemotePluginTree extends JTree {
 				if (plugin == null) {
 					child.setIsDownloadable(true);
 				}
-				node.add(child);
+				versionsRootNode.add(child);
 			}
 		}
+		node.add(versionsRootNode);
 		
 		return node;
 	}
@@ -80,7 +105,7 @@ public class RemotePluginTree extends JTree {
 		PluginVersionNode node = new PluginVersionNode(plugin);
 		
 		dependencies = client.getDependencies(plugin);
-		DefaultMutableTreeNode dependenciesNode = new DefaultMutableTreeNode("Dependencies");
+		DefaultMutableTreeNode dependenciesNode = new DefaultMutableTreeNode("dependencies");
 		for (PluginRO dependency : dependencies) {
 			PluginDependencyNode child = (PluginDependencyNode)createRemoteDependencyTree(dependency);
 			dependenciesNode.add(child);

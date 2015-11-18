@@ -1,4 +1,4 @@
-package com.trinary.rmmv.ui.components.panel;
+package com.trinary.rmmv.ui.components;
 
 import java.awt.BorderLayout;
 
@@ -6,7 +6,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextPane;
-import javax.swing.JTree;
 import javax.swing.border.EmptyBorder;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -18,6 +17,8 @@ public class PluginManagerPanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	protected JTextPane statusTable;
+	protected LocalPluginTree local;
+	protected RemotePluginTree remote;
 
 	public PluginManagerPanel() {
 		super();
@@ -38,11 +39,14 @@ public class PluginManagerPanel extends JPanel {
 		leftScrollPane = new JScrollPane();
 		rightScrollPane = new JScrollPane();
 		
-		JTree local = new LocalPluginTree();
+		local = new LocalPluginTree();
+		local.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+		local.addMouseListener(new PluginTreeListener(local, statusTable));
+		local.addTreeSelectionListener(new PluginTreeListener(local, statusTable));
 		leftScrollPane.setViewportView(local);
 		splitPane.setLeftComponent(leftScrollPane);
 		
-		JTree remote = new RemotePluginTree();
+		remote = new RemotePluginTree();
 		remote.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
 		remote.addMouseListener(new PluginTreeListener(remote, statusTable));
 		remote.addTreeSelectionListener(new PluginTreeListener(remote, statusTable));
@@ -54,4 +58,27 @@ public class PluginManagerPanel extends JPanel {
 		splitPane.setDividerLocation(0.5);
 		splitPane.setResizeWeight(0.5);
 	}
+
+	/**
+	 * @return the statusTable
+	 */
+	public JTextPane getStatusTable() {
+		return statusTable;
+	}
+
+	/**
+	 * @return the local
+	 */
+	public LocalPluginTree getLocalTree() {
+		return local;
+	}
+
+	/**
+	 * @return the remote
+	 */
+	public RemotePluginTree getRemoteTree() {
+		return remote;
+	}
+	
+	
 }

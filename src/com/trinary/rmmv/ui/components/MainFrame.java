@@ -2,16 +2,19 @@ package com.trinary.rmmv.ui.components;
 
 import javax.swing.Icon;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import com.trinary.rmmv.ui.components.panel.PluginManagerPanel;
+import com.trinary.rmmv.ui.ProjectManagerConfig;
 
 public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private JPanel pluginManagerPanel;
+	private PluginManagerPanel pluginManagerPanel;
 
 	public MainFrame() {
+		if (ProjectManagerConfig.propertiesFileMissing) {
+			// Launch dialog box to find projects root
+		}
+		
 		Icon closed = (Icon) UIManager.get("Tree.leafIcon");
 	    Icon opened = (Icon) UIManager.get("Tree.leafIcon");
 		UIManager.put("Tree.closedIcon", closed);
@@ -26,5 +29,12 @@ public class MainFrame extends JFrame {
 
 		this.setContentPane(pluginManagerPanel);
 		this.setVisible(true);
+	}
+
+	/**
+	 * @return the pluginManagerPanel
+	 */
+	public PluginManagerPanel getPluginManagerPanel() {
+		return pluginManagerPanel;
 	}
 }

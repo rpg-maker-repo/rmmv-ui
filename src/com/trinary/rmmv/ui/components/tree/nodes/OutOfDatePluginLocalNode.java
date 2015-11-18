@@ -5,35 +5,26 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import com.trinary.rmmv.ui.ro.Project;
 import com.trinary.rpgmaker.ro.PluginRO;
 
-public class PluginVersionLocalNode extends DefaultMutableTreeNode implements PluginNode, LocalNode {
+public class OutOfDatePluginLocalNode extends DefaultMutableTreeNode implements LocalNode, PluginNode {
 	private static final long serialVersionUID = 1L;
-	private PluginRO plugin;
-	private Project project;
-
-	public PluginVersionLocalNode(PluginRO plugin, Project project,  boolean allowsChildren) {
+	protected PluginRO plugin;
+	protected Project project;
+	
+	public OutOfDatePluginLocalNode(PluginRO plugin, Project project,  boolean allowsChildren) {
 		super(String.format("%s (%s)", plugin.getName(), plugin.getVersion()), allowsChildren);
-		this.project = project;
 		this.plugin = plugin;
+		this.project = project;
 	}
 
-	public PluginVersionLocalNode(PluginRO plugin, Project project) {
+	public OutOfDatePluginLocalNode(PluginRO plugin, Project project) {
 		super(String.format("%s (%s)", plugin.getName(), plugin.getVersion()));
-		this.project = project;
 		this.plugin = plugin;
+		this.project = project;
 	}
-
-	/**
-	 * @return the plugin
-	 */
+	
+	@Override
 	public PluginRO getPlugin() {
 		return plugin;
-	}
-
-	/**
-	 * @param plugin the plugin to set
-	 */
-	public void setPlugin(PluginRO plugin) {
-		this.plugin = plugin;
 	}
 
 	@Override
