@@ -1,21 +1,21 @@
 package com.trinary.rmmv.ui;
 
-import com.trinary.rmmv.ui.ro.Project;
+import com.trinary.rmmv.util.types.ProjectRO;
 
 public class ApplicationState {
-	protected Project localSelectedProject = null;
+	protected ProjectRO localSelectedProject = null;
 
 	/**
 	 * @return the localSelectedProject
 	 */
-	public Project getLocalSelectedProject() {
+	public ProjectRO getLocalSelectedProject() {
 		return localSelectedProject;
 	}
 
 	/**
 	 * @param localSelectedProject the localSelectedProject to set
 	 */
-	public void setLocalSelectedProject(Project localSelectedProject) {
+	public void setLocalSelectedProject(ProjectRO localSelectedProject) {
 		this.localSelectedProject = localSelectedProject;
 	}
 }

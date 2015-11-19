@@ -8,6 +8,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import com.trinary.rmmv.client.PluginClient;
 import com.trinary.rmmv.client.PluginVersionClient;
+import com.trinary.rmmv.ui.Application;
 import com.trinary.rmmv.ui.components.tree.nodes.PluginBaseNode;
 import com.trinary.rmmv.ui.components.tree.nodes.PluginDependencyNode;
 import com.trinary.rmmv.ui.components.tree.nodes.PluginVersionNode;
@@ -47,7 +48,7 @@ public class RemotePluginTree extends JTree {
 	}
 	
 	protected DefaultMutableTreeNode createRemotePluginTree() throws Exception {
-		PluginClient client = new PluginClient();
+		PluginClient client = new PluginClient(Application.getRMMVClientConfig());
 		List<PluginBaseRO> plugins = null;
 		DefaultMutableTreeNode node = null;
 
@@ -70,7 +71,7 @@ public class RemotePluginTree extends JTree {
 	}
 	
 	protected PluginBaseNode createRemotePluginBaseTree(PluginBaseRO plugin) throws Exception {
-		PluginClient client = new PluginClient();
+		PluginClient client = new PluginClient(Application.getRMMVClientConfig());
 		List<PluginRO> versions = null;
 		PluginBaseNode node = new PluginBaseNode(plugin);
 		versions = client.getVersions(plugin.getId());
@@ -100,7 +101,7 @@ public class RemotePluginTree extends JTree {
 	}
 	
 	protected PluginVersionNode createRemoteVersionTree(PluginRO plugin) throws Exception {
-		PluginVersionClient client = new PluginVersionClient();
+		PluginVersionClient client = new PluginVersionClient(Application.getRMMVClientConfig());
 		List<PluginRO> dependencies = null;
 		PluginVersionNode node = new PluginVersionNode(plugin);
 		
@@ -119,7 +120,7 @@ public class RemotePluginTree extends JTree {
 	}
 	
 	protected PluginDependencyNode createRemoteDependencyTree(PluginRO plugin) throws Exception {
-		PluginVersionClient client = new PluginVersionClient();
+		PluginVersionClient client = new PluginVersionClient(Application.getRMMVClientConfig());
 		List<PluginRO> dependencies = null;
 		PluginDependencyNode node = new PluginDependencyNode(plugin);
 		

@@ -4,11 +4,11 @@
   <artifactId>rmmv-ui</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <dependencies>
-  	<dependency>
-  		<groupId>commons-codec</groupId>
-  		<artifactId>commons-codec</artifactId>
-  		<version>1.10</version>
-  	</dependency>
+    <dependency>
+    	<groupId>rmmv-project-tools</groupId>
+    	<artifactId>rmmv-project-tools</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>

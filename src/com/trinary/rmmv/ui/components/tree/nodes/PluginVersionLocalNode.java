@@ -2,21 +2,21 @@ package com.trinary.rmmv.ui.components.tree.nodes;
 
 import javax.swing.tree.DefaultMutableTreeNode;
 
-import com.trinary.rmmv.ui.ro.Project;
+import com.trinary.rmmv.util.types.ProjectRO;
 import com.trinary.rpgmaker.ro.PluginRO;
 
 public class PluginVersionLocalNode extends DefaultMutableTreeNode implements PluginNode, LocalNode {
 	private static final long serialVersionUID = 1L;
 	private PluginRO plugin;
-	private Project project;
+	private ProjectRO project;
 
-	public PluginVersionLocalNode(PluginRO plugin, Project project,  boolean allowsChildren) {
+	public PluginVersionLocalNode(PluginRO plugin, ProjectRO project,  boolean allowsChildren) {
 		super(String.format("%s (%s)", plugin.getName(), plugin.getVersion()), allowsChildren);
 		this.project = project;
 		this.plugin = plugin;
 	}
 
-	public PluginVersionLocalNode(PluginRO plugin, Project project) {
+	public PluginVersionLocalNode(PluginRO plugin, ProjectRO project) {
 		super(String.format("%s (%s)", plugin.getName(), plugin.getVersion()));
 		this.project = project;
 		this.plugin = plugin;
@@ -37,7 +37,7 @@ public class PluginVersionLocalNode extends DefaultMutableTreeNode implements Pl
 	}
 
 	@Override
-	public Project getProject() {
+	public ProjectRO getProject() {
 		return project;
 	}
 }

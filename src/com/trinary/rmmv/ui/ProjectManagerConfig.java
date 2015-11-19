@@ -11,19 +11,23 @@ import java.util.Properties;
 public class ProjectManagerConfig {
 	public static String projectsRoot = null;
 	public static Boolean propertiesFileMissing = false;
-	
-	public static final String DEFAULT_PROJECTS_ROOT = "~/Documents/Games";
-	
 	protected static Boolean configUpdated = false;
+	
+	// Constants
+	public static final String DEFAULT_PROJECTS_ROOT = "~/Documents/Games";
+	public static final String WORKSPACE_PROPERTIES_FILE = "workspace.properties";
+	
+	// Config key values
+	public static final String PROJECTS_ROOT_KEY = "rmmv.projects.root";
 	
 	static {
 		Properties properties = new Properties();
 		try {
-			InputStream in = new FileInputStream("config.properties");
+			InputStream in = new FileInputStream(WORKSPACE_PROPERTIES_FILE);
 			properties.load(in);
 			
 			// Load config elements into this file.
-			projectsRoot = properties.getProperty("rmmv.projects.root");
+			projectsRoot = properties.getProperty(PROJECTS_ROOT_KEY);
 		} catch (FileNotFoundException e) {
 			propertiesFileMissing = true;
 			e.printStackTrace();
@@ -34,12 +38,12 @@ public class ProjectManagerConfig {
 		
 		if (projectsRoot == null) {
 			projectsRoot = DEFAULT_PROJECTS_ROOT;
-			properties.put("rmmv.projects.root", DEFAULT_PROJECTS_ROOT);
+			properties.put(PROJECTS_ROOT_KEY, DEFAULT_PROJECTS_ROOT);
 			configUpdated = true;
 		}
 		
 		if (configUpdated) {
-			storeConfig("config.properties", properties);
+			storeConfig(WORKSPACE_PROPERTIES_FILE, properties);
 		}
 	}
 	
