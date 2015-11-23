@@ -1,6 +1,7 @@
 package com.trinary.rmmv.ui.actions;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 import javax.swing.AbstractAction;
 
@@ -27,8 +28,16 @@ public class DownloadAction extends AbstractAction {
 			return;
 		}
 		
-		io.storePlugin(plugin, currentProject.getPath() + "/js/plugins/");
-		io.storeDependencies(plugin, currentProject.getPath() + "/js/plugins/");
+		// Store plugin and dependencies.
+		try {
+			io.storePlugin(currentProject, plugin, true);
+			io.storeDependencies(currentProject, plugin, true);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			Application.showDialog("Download failed!");
+			return;
+		}
+	
 		Application.showDialog(String.format("Downloaded %s (%s) and all dependencies!",
 				plugin.getName(), plugin.getVersion()));
 		

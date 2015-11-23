@@ -1,6 +1,7 @@
 package com.trinary.rmmv.ui.actions;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 
 import javax.swing.AbstractAction;
 
@@ -29,11 +30,18 @@ public class UpdateAction extends AbstractAction {
 		}
 		
 		// Delete the old plugin version
-		io.deletePlugin(plugin, currentProject.getPath() + "/js/plugins/");
+		io.deletePlugin(project, plugin);
 		
 		// Store the new plugin version
-		io.storePlugin(plugin.getLatestVersion(), currentProject.getPath() + "/js/plugins/");
-		io.storeDependencies(plugin.getLatestVersion(), currentProject.getPath() + "/js/plugins/");
+		try {
+			io.storePlugin(project, plugin.getLatestVersion(), true);
+			io.storeDependencies(project, plugin.getLatestVersion(), true);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+			Application.showDialog("Update failed");
+			return;
+		}
+		
 		Application.showDialog(String.format("Updated %s (%s) to version %s", 
 				plugin.getName(), 
 				plugin.getVersion(), 
