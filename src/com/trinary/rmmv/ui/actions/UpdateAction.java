@@ -12,9 +12,10 @@ import com.trinary.rmmv.util.types.ProjectRO;
 public class UpdateAction extends AbstractAction {
 	private static final long serialVersionUID = 1L;
 	protected OutOfDatePluginRO plugin;
+	protected ProjectRO project;
 	protected PluginIOHelper io = new PluginIOHelper(Application.getRMMVClientConfig());
 	
-	public UpdateAction(OutOfDatePluginRO plugin) {
+	public UpdateAction(ProjectRO project, OutOfDatePluginRO plugin) {
 		super("Update");
 		this.plugin = plugin;
 	}

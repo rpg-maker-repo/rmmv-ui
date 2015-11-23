@@ -11,13 +11,20 @@ public class PluginVersionLocalNode extends DefaultMutableTreeNode implements Pl
 	private ProjectRO project;
 
 	public PluginVersionLocalNode(PluginRO plugin, ProjectRO project,  boolean allowsChildren) {
-		super(String.format("%s (%s)", plugin.getName(), plugin.getVersion()), allowsChildren);
+		super(String.format("%s (%s) %s", 
+				plugin.getName(), 
+				plugin.getVersion(), 
+				project.getPluginDescriptor(plugin) != null && project.getPluginDescriptor(plugin).getStatus() ? "ON" : "OFF"), 
+				allowsChildren);
 		this.project = project;
 		this.plugin = plugin;
 	}
 
 	public PluginVersionLocalNode(PluginRO plugin, ProjectRO project) {
-		super(String.format("%s (%s)", plugin.getName(), plugin.getVersion()));
+		super(String.format("%s (%s) %s", 
+				plugin.getName(), 
+				plugin.getVersion(),
+				project.getPluginDescriptor(plugin) != null && project.getPluginDescriptor(plugin).getStatus() ? "ON" : "OFF"));
 		this.project = project;
 		this.plugin = plugin;
 	}

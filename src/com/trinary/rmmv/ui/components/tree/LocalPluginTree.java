@@ -16,7 +16,8 @@ import com.trinary.rmmv.ui.components.tree.nodes.OutOfDatePluginLocalNode;
 import com.trinary.rmmv.ui.components.tree.nodes.PluginVersionLocalNode;
 import com.trinary.rmmv.ui.components.tree.nodes.ProjectNode;
 import com.trinary.rmmv.ui.components.tree.nodes.UnknownPluginVersionLocalNode;
-import com.trinary.rmmv.util.RMMVProjectAnalyzer;
+import com.trinary.rmmv.util.analysis.ProjectAnalyzer;
+import com.trinary.rmmv.util.analysis.types.PluginDescriptor;
 import com.trinary.rmmv.util.types.AmbiguousPluginRO;
 import com.trinary.rmmv.util.types.OutOfDatePluginRO;
 import com.trinary.rmmv.util.types.ProjectRO;
@@ -26,7 +27,7 @@ import com.trinary.rpgmaker.ro.PluginRO;
 public class LocalPluginTree extends JTree {
 	private static final long serialVersionUID = 1L;
 	
-	protected RMMVProjectAnalyzer analyzer = new RMMVProjectAnalyzer(Application.getRMMVClientConfig());
+	protected ProjectAnalyzer analyzer = new ProjectAnalyzer(Application.getRMMVClientConfig());
 
 	public LocalPluginTree() {
 		this.setCellRenderer(new DefaultTreeCellRenderer() {
@@ -51,7 +52,14 @@ public class LocalPluginTree extends JTree {
 		        } else if (node instanceof OutOfDatePluginLocalNode) {
 		        	setForeground(Color.GRAY);
 		        } else if (node instanceof PluginVersionLocalNode) {
-		        	setForeground(Color.GREEN);
+		        	ProjectRO project = ((PluginVersionLocalNode)node).getProject();
+		        	PluginRO  plugin = ((PluginVersionLocalNode)node).getPlugin();
+		        	PluginDescriptor descriptor = project.getPluginDescriptor(plugin);
+		        	if (descriptor == null || !descriptor.getStatus()) {
+		        		setForeground(Color.BLACK);
+		        	} else {
+		        		setForeground(Color.GREEN);
+		        	}
 		        }
 
 		        return this;
@@ -64,7 +72,7 @@ public class LocalPluginTree extends JTree {
 	
 	public void refreshTree() {
 		DefaultMutableTreeNode root = new DefaultMutableTreeNode("Local Projects");
-		List<ProjectRO> projects = analyzer.analyzeWorkspace(ProjectManagerConfig.projectsRoot);
+		List<ProjectRO> projects = analyzer.analyzeWorkspace(ProjectManagerConfig.projectsRoot, ProjectManagerConfig.locale);
 		
 		for (ProjectRO project : projects) {
 			ProjectNode projectRoot = new ProjectNode(project);

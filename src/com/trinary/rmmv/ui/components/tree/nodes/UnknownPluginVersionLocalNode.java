@@ -6,7 +6,7 @@ import com.trinary.rmmv.util.types.ProjectRO;
 import com.trinary.rmmv.util.types.UnknownPluginRO;
 import com.trinary.rpgmaker.ro.PluginRO;
 
-public class UnknownPluginVersionLocalNode extends DefaultMutableTreeNode implements LocalNode {
+public class UnknownPluginVersionLocalNode extends DefaultMutableTreeNode implements PluginNode, LocalNode {
 	private static final long serialVersionUID = 1L;
 	private PluginRO plugin;
 	private ProjectRO project;

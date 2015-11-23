@@ -8,17 +8,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import com.trinary.rmmv.util.analysis.types.PluginMetaDataLocale;
+
 public class ProjectManagerConfig {
 	public static String projectsRoot = null;
+	public static PluginMetaDataLocale locale = null;
 	public static Boolean propertiesFileMissing = false;
+	
 	protected static Boolean configUpdated = false;
 	
 	// Constants
 	public static final String DEFAULT_PROJECTS_ROOT = "~/Documents/Games";
+	public static final PluginMetaDataLocale DEFAULT_LOCALE = PluginMetaDataLocale.EN;
 	public static final String WORKSPACE_PROPERTIES_FILE = "workspace.properties";
 	
 	// Config key values
 	public static final String PROJECTS_ROOT_KEY = "rmmv.projects.root";
+	public static final String LOCALE_KEY = "rmmv.locale";
 	
 	static {
 		Properties properties = new Properties();
@@ -28,6 +34,7 @@ public class ProjectManagerConfig {
 			
 			// Load config elements into this file.
 			projectsRoot = properties.getProperty(PROJECTS_ROOT_KEY);
+			locale = PluginMetaDataLocale.valueOf(properties.getProperty(LOCALE_KEY).toUpperCase());
 		} catch (FileNotFoundException e) {
 			propertiesFileMissing = true;
 			e.printStackTrace();
@@ -39,6 +46,12 @@ public class ProjectManagerConfig {
 		if (projectsRoot == null) {
 			projectsRoot = DEFAULT_PROJECTS_ROOT;
 			properties.put(PROJECTS_ROOT_KEY, DEFAULT_PROJECTS_ROOT);
+			configUpdated = true;
+		}
+		
+		if (locale == null) {
+			locale = PluginMetaDataLocale.EN;
+			properties.put(LOCALE_KEY, locale.getValue());
 			configUpdated = true;
 		}
 		
